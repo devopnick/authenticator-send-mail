@@ -70,7 +70,7 @@
 
                     {% if current_user.is_authenticated %}
 
-                    <h2 class="text-white bg-primary-700 font-bold text-sm">
+                    <h2 class="text-blue-700 bg-primary-700 font-bold text-sm">
                         {% if name %}
                         Benvenuto {{ name }}!
                         {% else %}
@@ -79,7 +79,7 @@
                     </h2>
                     <ul class="py-1 text-gray-700 dark:text-gray-300" aria-labelledby="dropdown">
                         <li>
-                            <a class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+                            <a class="text-blue-700 bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
                                 href="{{ url_for('logout') }}">
                                 Logout</a>
                         </li>
