@@ -368,7 +368,7 @@
 
     button.addEventListener('click', () => {
         // Usa una variabile per controllare lo stato corrente della proprietà
-        const isTranslated = drawer.style.getPropertyValue('--tw-translate-x') === '100%';
+        const isTranslated = drawer.style.getPropertyValue('--tw-translate-x') === '0%';
 
         // Toggle della proprietà: aggiungi o rimuovi in base allo stato
         if (isTranslated) {
@@ -376,7 +376,7 @@
             drawer.style.removeProperty('--tw-translate-x');
         } else {
             // Se non è tradotto, aggiungi la proprietà per spostarlo fuori dallo schermo
-            drawer.style.setProperty('--tw-translate-x', '100%');
+            drawer.style.setProperty('--tw-translate-x', '0%');
         }
     });
 </script>
