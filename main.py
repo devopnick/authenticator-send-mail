@@ -57,7 +57,7 @@ def index():
         name = users.get(current_user.id, {}).get('name', 'utente')
         return render_template('index.html', name=name, email=current_user.id )
     else:
-        return render_template('index.html', name=None, email=None )
+        return render_template('index.html', name=None, email=None, current_page='index' )
         
 @app.route("/register", methods=['GET', 'POST'])
 def register():
@@ -80,7 +80,7 @@ def register():
   
             return redirect(url_for('dashboard'))
 
-    return render_template('register.html', form=form)
+    return render_template('register.html', form=form, current_page='register')
 
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -99,7 +99,7 @@ def login():
         else:
             flash('Email o password errati. Riprova.', 'danger')
 
-    return render_template('login.html', form=form)
+    return render_template('login.html', form=form, current_page='login')
 
 @app.route("/send-email", methods=['GET', 'POST'])
 def sender():
@@ -126,14 +126,14 @@ def sender():
             except Exception as e:
                 feedback_message = f"Errore nell'invio: {str(e)}"
 
-    return render_template('send-email.html', feedback_class=feedback_class, feedback_message=feedback_message, emails=emails)
+    return render_template('send-email.html', feedback_class=feedback_class, feedback_message=feedback_message, emails=emails, current_page='send-email')
 
 
 @app.route("/dashboard")
 @login_required
 def dashboard():
     name = users.get(current_user.id, {}).get('name', 'utente')
-    return render_template('dashboard.html', name=name, email=current_user.id)
+    return render_template('dashboard.html', name=name, email=current_user.id, current_page='dashboard')
 
 @app.route("/logout")
 @login_required
