@@ -363,13 +363,17 @@
     </main>
 </body>
 <script>
-    // Trova gli elementi nella pagina
-    const drawerToggleButton = document.getElementById('drawer-toggle');
-    const drawer = document.getElementById('drawer-navigation');
+    button.addEventListener('click', () => {
+        // Usa una variabile per controllare lo stato corrente della proprietà
+        const isTranslated = drawer.style.getPropertyValue('--tw-translate-x') === '100%';
 
-    // Funzione per attivare/disattivare la sidebar
-    drawerToggleButton.addEventListener('click', () => {
-        drawer.classList.toggle('hidden'); // Aggiunge o rimuove la classe "open"
+        // Toggle della proprietà: aggiungi o rimuovi in base allo stato
+        if (isTranslated) {
+            // Se già tradotto, rimuovi la proprietà per riportare il drawer nella posizione iniziale
+            drawer.style.removeProperty('--tw-translate-x');
+        } else {
+            // Se non è tradotto, aggiungi la proprietà per spostarlo fuori dallo schermo
+            drawer.style.setProperty('--tw-translate-x', '100%');
+        }
     });
-
 </script>
