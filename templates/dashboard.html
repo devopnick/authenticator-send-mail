@@ -363,6 +363,9 @@
     </main>
 </body>
 <script>
+    const button = document.querySelector('[data-drawer-toggle="drawer-navigation"]');
+    const drawer = document.getElementById('drawer-navigation');
+
     button.addEventListener('click', () => {
         // Usa una variabile per controllare lo stato corrente della proprietà
         const isTranslated = drawer.style.getPropertyValue('--tw-translate-x') === '100%';
