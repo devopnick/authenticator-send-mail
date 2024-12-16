@@ -1,16 +1,26 @@
 from flask import Flask, render_template, request, flash, redirect,url_for
 from wtforms import Form, StringField,PasswordField, validators
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
-from flask_mail import Mail
+from flask_mail import Mail, Message
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
+
+# Configurazione Flask-Mail
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'nicolaguarise00@gmail.com'  # Cambia con il tuo indirizzo email
+app.config['MAIL_PASSWORD'] = 'zyrhvorphptgmqic'  # App password generata da Google
+app.config['MAIL_DEFAULT_SENDER'] = 'nicolaguarise00@gmail.com'  # Mittente predefinito
 mail = Mail(app)
 
 # Configurazione di Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+emails = ["example1@gmail.com", "example2@gmail.com"]
+
 
 # Simulazione di un database per utenti
 users = {"nicolaheavy@gmail.com": {"password": "provalogin"}}
@@ -91,23 +101,33 @@ def login():
 
     return render_template('login.html', form=form)
 
-@app.route("/send-email", methods=['GET','POST'])
+@app.route("/send-email", methods=['GET', 'POST'])
 def sender():
-    emails = ['nicolajobs00@gmail.com', 'developer@webculture.it']  # Dati dinamici
-    form=LoginForm(request.form)
+    feedback_message = None
+    feedback_class = "text-red-500"
 
-    if request.method == 'POST' and form.validate():
-        email = form.email.data
-        password = form.password.data
+    if request.method == 'POST':
+        recipient_email = request.form.get("recipient_email")
+        subject = request.form.get("subject")
+        body = request.form.get("body")
 
-        if email in users and users[email]['password'] == password:
-            user = User(email)
-            login_user(user)  # Login dell'utente
-            flash('Login effettuato con successo!', 'success')
-            return redirect(url_for('sender'))
+        if not recipient_email or not subject or not body:
+            feedback_message = "Tutti i campi sono obbligatori."
         else:
-            flash('Email o password errati. Riprova.', 'danger')
-    return render_template('send-email.html', form=form, emails=emails)
+            try:
+                recipients = [email.strip() for email in recipient_email.split(",")]
+                msg = Message(subject=subject,
+                              sender="nicolaguarise00@gmail.com",  # Specifica il mittente
+                              recipients=recipients,
+                              body=body)
+                mail.send(msg)
+                feedback_message = "Email inviata con successo!"
+                feedback_class = "text-green-500"
+            except Exception as e:
+                feedback_message = f"Errore nell'invio: {str(e)}"
+
+    return render_template('send-email.html', feedback_class=feedback_class, feedback_message=feedback_message, emails=emails)
+
 
 @app.route("/dashboard")
 @login_required
