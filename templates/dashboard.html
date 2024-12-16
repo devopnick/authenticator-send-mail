@@ -363,12 +363,18 @@
     </main>
 </body>
 <script>
-    // Seleziona il bottone e l'elemento target
-    const button = document.querySelector('[data-drawer-toggle="drawer-navigation"]');
+    // Trova gli elementi nella pagina
+    const drawerToggleButton = document.getElementById('drawer-toggle');
     const drawer = document.getElementById('drawer-navigation');
+    const closeDrawerButton = document.getElementById('close-drawer');
 
-    button.addEventListener('click', () => {
-        drawer.style.setProperty('--tw-translate-x', '0%');
-        drawer.style.setProperty('padding-top', '5.5rem');
+    // Funzione per attivare/disattivare la sidebar
+    drawerToggleButton.addEventListener('click', () => {
+        drawer.classList.toggle('hidden'); // Aggiunge o rimuove la classe "open"
+    });
+
+    // Chiudi la sidebar quando il bottone di chiusura viene cliccato
+    closeDrawerButton.addEventListener('click', () => {
+        drawer.classList.remove('hidden'); // Rimuove la classe "open"
     });
 </script>
