@@ -361,3 +361,13 @@
         {% endblock %}
     </main>
 </body>
+<script>
+    // Seleziona il bottone e l'elemento target
+    const button = document.querySelector('[data-drawer-toggle="drawer-navigation"]');
+    const drawer = document.getElementById('drawer-navigation');
+
+    button.addEventListener('click', () => {
+
+        drawer.style.setProperty('--tw-translate-x', '100%');
+    });
+</script>
