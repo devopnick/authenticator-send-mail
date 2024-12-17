@@ -6,6 +6,9 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from dotenv import load_dotenv
+from supabase import create_client, Client
+
+
 
 load_dotenv()
 
@@ -50,24 +53,18 @@ class LoginForm(Form):
     password = PasswordField('Password', [validators.DataRequired()])
 
 
-# Configura il database PostgreSQL usando le variabili d'ambiente
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('POSTGRES_URL_NON_POOLING')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+url: str = os.environ.get("https://gdurjgazwqavavpgttqz.supabase.co")
+key: str = os.environ.get("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkdXJqZ2F6d3FhdmF2cGd0dHF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ0NDQ3MzIsImV4cCI6MjA1MDAyMDczMn0.4xta4I9YsMNRh7zeoEBIUa3nTD3cAzUpIL3vSuWPDdY")
+supabase: Client = create_client(url, key)
 
-# Inizializza SQLAlchemy
-db = SQLAlchemy(app)
 
 # Configurazione Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-# Modello Utente
-class User(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)
 
+response = supabase.table("countries").select("name").execute()
 
 
 @app.route("/")
