@@ -99,8 +99,11 @@ def login():
             return redirect(url_for('dashboard'))
         else:
             flash('Email o password errati. Riprova.', 'danger')
-
-    return render_template('login.html', form=form, current_page='login')
+    if current_user.is_authenticated:
+        name = users.get(current_user.id, {}).get('name', 'utente')
+        return render_template('login.html', name=name, email=current_user.id, form=form, current_page='login')
+    else:
+        return render_template('login.html', name=None, email=None, form=form, current_page='login')
 
 @app.route("/send-email", methods=['GET', 'POST'])
 @login_required
@@ -138,8 +141,12 @@ def sender():
                 # Feedback di errore
                 feedback_message = f"Errore nell'invio: {str(e)}"
                 print(f"Errore nell'invio dell'email: {str(e)}")  # Stampa errore nella console per il debug
+    if current_user.is_authenticated:
+        name = users.get(current_user.id, {}).get('name', 'utente')
+        return render_template('send-email.html',name=name, email=current_user.id, feedback_class=feedback_class, feedback_message=feedback_message)
+    else:
+        return render_template('send-email.html',name=name, email=None, feedback_class=feedback_class, feedback_message=feedback_message)
 
-    return render_template('send-email.html', feedback_class=feedback_class, feedback_message=feedback_message)
 
 @app.route("/profile", methods=['GET', 'POST'])
 @login_required
