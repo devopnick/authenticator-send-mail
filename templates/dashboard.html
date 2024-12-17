@@ -11,7 +11,7 @@
         referrerpolicy="origin"></script>
     <script>
         tinymce.init({
-            selector: 'textarea',  // Collega TinyMCE alla textarea
+            selector: '#body',  // Assicurati che corrisponda all'ID della textarea
             height: 300,
             menubar: false,
             plugins: 'link image lists',
@@ -19,10 +19,12 @@
             branding: false
         });
 
+        // Sincronizza TinyMCE con la textarea prima dell'invio
         document.querySelector('form').addEventListener('submit', function () {
             tinymce.triggerSave();
         });
     </script>
+
     <title>Document</title>
 </head>
 

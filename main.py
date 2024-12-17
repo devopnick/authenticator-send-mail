@@ -10,6 +10,7 @@ app.secret_key = 'your_secret_key'
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_USERNAME'] = 'nicolaguarise00@gmail.com'  # Cambia con il tuo indirizzo email
 app.config['MAIL_PASSWORD'] = 'zyrhvorphptgmqic'  # App password generata da Google
 app.config['MAIL_DEFAULT_SENDER'] = 'nicolaguarise00@gmail.com'  # Mittente predefinito
@@ -111,23 +112,33 @@ def sender():
         subject = request.form.get("subject")
         body = request.form.get("body")
 
+        # Verifica se tutti i campi sono compilati
         if not recipient_email or not subject or not body:
             feedback_message = "Tutti i campi sono obbligatori."
         else:
             try:
+                # Split dell'email in caso di più destinatari
                 recipients = [email.strip() for email in recipient_email.split(",")]
+
+                # Crea il messaggio
                 msg = Message(subject=subject,
                               sender="nicolaguarise00@gmail.com",  # Specifica il mittente
                               recipients=recipients,
                               body=body)
+                msg.html = body  # Usa il contenuto HTML della textarea
+
+                # Invio dell'email
                 mail.send(msg)
+
+                # Feedback positivo
                 feedback_message = "Email inviata con successo!"
                 feedback_class = "text-green-500"
             except Exception as e:
+                # Feedback di errore
                 feedback_message = f"Errore nell'invio: {str(e)}"
+                print(f"Errore nell'invio dell'email: {str(e)}")  # Stampa errore nella console per il debug
 
-    return render_template('send-email.html', feedback_class=feedback_class, feedback_message=feedback_message, emails=emails, current_page='send-email')
-
+    return render_template('send-email.html', feedback_class=feedback_class, feedback_message=feedback_message)
 
 @app.route("/dashboard")
 @login_required
