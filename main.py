@@ -141,7 +141,7 @@ def sender():
 
     return render_template('send-email.html', feedback_class=feedback_class, feedback_message=feedback_message)
 
-@app.route("/profile")
+@app.route("/profile", methods=['GET', 'POST'])
 @login_required
 def profile():
     # Controlla se il metodo della richiesta è POST
