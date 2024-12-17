@@ -97,9 +97,11 @@ def register():
 
     if current_user.is_authenticated:
         name = users.get(current_user.id, {}).get('name', 'utente')
-        return render_template('register.html', form=form, name=name, email=current_user.id, current_page='register')
+        password = users.get(current_user.id, {}).get('password')
+
+        return render_template('register.html', password=password, form=form, name=name, email=current_user.id, current_page='register')
     else:
-        return render_template('register.html', form=form, name=None, email=None, current_page='register')
+        return render_template('register.html', password=None, form=form, name=None, email=None, current_page='register')
 
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -107,21 +109,24 @@ def login():
     form = LoginForm(request.form)
 
     if request.method == 'POST' and form.validate():
-        email = form.email.data
-        password = form.password.data
+        email = request.form['email']
+        password = request.form['password']
 
-        if email in users and users[email]['password'] == password:
-            user = User(email)
-            login_user(user)  # Login dell'utente
+        user = User.quesry.filter_by(email=email).first()
+        if user in check_password_hash(user.password, password):
+            login_user(user)
             flash('Login effettuato con successo!', 'success')
             return redirect(url_for('dashboard'))
-        else:
-            flash('Email o password errati. Riprova.', 'danger')
+
+        flash('Email o password errati. Riprova.', 'danger')
+    
     if current_user.is_authenticated:
         name = users.get(current_user.id, {}).get('name', 'utente')
-        return render_template('login.html', name=name, email=current_user.id, form=form, current_page='login')
+        password = users.get(current_user.id, {}).get('password')
+
+        return render_template('login.html', password=password, name=name, email=current_user.id, form=form, current_page='login')
     else:
-        return render_template('login.html', name=None, email=None, form=form, current_page='login')
+        return render_template('login.html', password=None, name=None, email=None, form=form, current_page='login')
 
 @app.route("/send-email", methods=['GET', 'POST'])
 @login_required
@@ -161,9 +166,11 @@ def sender():
                 print(f"Errore nell'invio dell'email: {str(e)}")  # Stampa errore nella console per il debug
     if current_user.is_authenticated:
         name = users.get(current_user.id, {}).get('name', 'utente')
-        return render_template('send-email.html',name=name, email=current_user.id, feedback_class=feedback_class, feedback_message=feedback_message)
+        password = users.get(current_user.id, {}).get('password')
+
+        return render_template('send-email.html', password=password, name=name, email=current_user.id, feedback_class=feedback_class, feedback_message=feedback_message)
     else:
-        return render_template('send-email.html',name=name, email=None, feedback_class=feedback_class, feedback_message=feedback_message)
+        return render_template('send-email.html', password=None, name=name, email=None, feedback_class=feedback_class, feedback_message=feedback_message)
 
 
 @app.route("/profile", methods=['GET', 'POST'])
@@ -197,9 +204,11 @@ def profile():
 
     if current_user.is_authenticated:
         name = users.get(current_user.id, {}).get('name', 'utente')
-        return render_template('profile.html', email=current_user.id, name=name)
+        password = users.get(current_user.id, {}).get('password')
+        
+        return render_template('profile.html', password=password, email=current_user.id, name=name)
     else:  
-        return render_template('profile.html', email=None, name=None)
+        return render_template('profile.html', password=None, email=None, name=None)
 
 @app.route("/dashboard")
 @login_required
