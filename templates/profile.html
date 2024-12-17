@@ -6,7 +6,7 @@
         <h1 class="text-2xl font-semibold mb-4">Benvenuto, {{ name }}!</h1>
     </div>
 
-    <div class="max-w-3xl w-[30%] mt-2 md:mt-0 mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <div class="max-w-3xl w-full md:w-[30%] mt-2 md:mt-0 mx-auto p-6 bg-white shadow-lg rounded-lg">
         <!-- Sezione per i messaggi di feedback -->
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
