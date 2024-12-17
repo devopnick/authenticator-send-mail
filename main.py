@@ -80,12 +80,9 @@ def register():
             login_user(user)
   
             return redirect(url_for('dashboard'))
-        
-    if current_user.is_authenticated:
-        name = users.get(current_user.id, {}).get('name', 'utente')
-        return render_template('register.html', form=form, name=name, form=form, current_page='register', email=current_user.id)
-    else:
-        return render_template('register.html', form=form, name=None, form=form, current_page='register', email=None)
+
+    return render_template('register.html', form=form, current_page='register')
+
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -103,11 +100,7 @@ def login():
         else:
             flash('Email o password errati. Riprova.', 'danger')
 
-    if current_user.is_authenticated:
-        name = users.get(current_user.id, {}).get('name', 'utente')
-        return render_template('login.html', name=name, form=form, current_page='login', email=current_user.id)
-    else:
-        return render_template('login.html',name=None, form=form, current_page='login', email=None)
+    return render_template('login.html', form=form, current_page='login')
 
 @app.route("/send-email", methods=['GET', 'POST'])
 @login_required
@@ -146,11 +139,7 @@ def sender():
                 feedback_message = f"Errore nell'invio: {str(e)}"
                 print(f"Errore nell'invio dell'email: {str(e)}")  # Stampa errore nella console per il debug
 
-    if current_user.is_authenticated:
-        name = users.get(current_user.id, {}).get('name', 'utente')
-        return render_template('send-email.html', name=name, current_page='send-email', feedback_class=feedback_class, feedback_message=feedback_message, email=current_user.id)
-    else:
-        return render_template('send-email.html',name=None, current_page='send-email', feedback_class=feedback_class, feedback_message=feedback_message, email=None)
+    return render_template('send-email.html', feedback_class=feedback_class, feedback_message=feedback_message)
 
 @app.route("/profile", methods=['GET', 'POST'])
 @login_required
@@ -181,11 +170,8 @@ def profile():
             flash(f"Errore durante l'aggiornamento delle credenziali: {str(e)}", "danger")
             return redirect(url_for('profile'))
 
-    if current_user.is_authenticated:
-        name = users.get(current_user.id, {}).get('name', 'utente')
-        return render_template('profile.html', name=name, current_page='profile', email=current_user.id)
-    else:
-        return render_template('profile.html',name=None, current_page='profile', email=None)
+
+    return render_template('profile.html', email=current_user.id)
 
 @app.route("/dashboard")
 @login_required
