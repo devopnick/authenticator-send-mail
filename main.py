@@ -174,7 +174,7 @@ def profile():
         name = users.get(current_user.id, {}).get('name', 'utente')
         return render_template('profile.html', email=current_user.id, name=name)
     else:  
-        return render_template('profile.html', email=current_user.id, name=None)
+        return render_template('profile.html', email=None, name=None)
 
 @app.route("/dashboard")
 @login_required
