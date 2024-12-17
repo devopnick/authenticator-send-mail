@@ -12,44 +12,37 @@
         </div>
         {% endif %}
 
-        <form method="POST" onsubmit="tinymce.triggerSave()" class="">
+        <!-- Form per inviare email -->
+        <form method="POST" onsubmit="tinymce.triggerSave()">
             <!-- Destinatario -->
-            <div class="mb-6">
-                <label for="recipient_email" class="block text-lg font-semibold text-gray-700 mb-2">
-                    Destinatario
-                </label>
-                <input type="email" name="recipient_email" id="recipient_email"
+            <div class="mb-5">
+                <label for="recipient_email" class="block text-lg font-medium text-gray-700">Destinatario:</label>
+                <input
                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"
-                    placeholder="Inserisci email" required>
+                    type="text" name="recipient_email" id="recipient_email" placeholder="Inserisci email" required>
             </div>
 
             <!-- Oggetto -->
-            <div class="mb-6">
-                <label for="subject" class="block text-lg font-semibold text-gray-700 mb-2">
-                    Oggetto
-                </label>
-                <input type="text" name="subject" id="subject"
+            <div class="mb-5">
+                <label for="subject" class="block text-lg font-medium text-gray-700">Oggetto:</label>
+                <input
                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"
-                    placeholder="Inserisci oggetto" required>
+                    type="text" name="subject" id="subject" required>
             </div>
 
             <!-- Corpo con TinyMCE -->
-            <div class="mb-6">
-                <label for="body" class="block text-lg font-semibold text-gray-700 mb-2">
-                    Corpo del messaggio
-                </label>
-                <textarea name="body" id="body"
+            <div class="mb-5">
+                <label for="body" class="block text-lg font-medium text-gray-700">Corpo del messaggio:</label>
+                <textarea
                     class="w-full h-40 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"
-                    placeholder="Scrivi il messaggio qui..." required></textarea>
+                    name="body" id="body"></textarea>
             </div>
 
             <!-- Bottone per inviare -->
-            <div class="flex justify-end">
-                <button type="submit"
-                    class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
-                    Invia Email
-                </button>
-            </div>
+            <button type="submit"
+                class="w-full px-4 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200">
+                Invia
+            </button>
         </form>
 
     </div>
