@@ -2,9 +2,14 @@
 
 {% block content %}
 <div class="h-dvh flex justify-center items-center">
-    <div class="max-w-3xl mt-[120px] md:mt-0 mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <div class="max-w-3xl md:mt-0 mx-auto p-6 bg-white shadow-lg rounded-lg">
         <h1 class="text-2xl font-semibold mb-4">Benvenuto, {{ email }}!</h1>
+    </div>
+</div>
 
+
+<div class="h-dvh flex justify-center items-center">
+    <div class="max-w-3xl mt-[120px] md:mt-0 mx-auto p-6 bg-white shadow-lg rounded-lg">
         <!-- Sezione per i messaggi di feedback -->
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
