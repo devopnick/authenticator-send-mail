@@ -191,9 +191,11 @@ def profile():
 def dashboard():
     if current_user.is_authenticated:
         name = users.get(current_user.id, {}).get('name', 'utente')
-        return render_template('dashboard.html', name=name, email=current_user.id, current_page='dashboard')
+        password = users.get(current_user.id, {}).get('password')
+
+        return render_template('dashboard.html', password=password, name=name, email=current_user.id, current_page='dashboard')
     else:
-        return render_template('dashboard.html', name=None, email=None, current_page='dashboard')
+        return render_template('dashboard.html', password=None, name=None, email=None, current_page='dashboard')
 
 @app.route("/logout")
 @login_required
