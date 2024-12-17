@@ -102,29 +102,43 @@ def login():
 
     return render_template('login.html', form=form, current_page='login')
 
-@app.route("/send-email", methods=["POST"])
-@login_required
-def send_email():
-    recipient_email = request.form.get("recipient_email")
-    subject = request.form.get("subject")
-    body = request.form.get("body")
+@app.route("/send-email", methods=['GET', 'POST'])
+def sender():
+    feedback_message = None
+    feedback_class = "text-red-500"
 
-    if not recipient_email or not subject or not body:
-        flash("Tutti i campi sono obbligatori.", "danger")
-        return redirect(url_for("dashboard"))
+    if request.method == 'POST':
+        recipient_email = request.form.get("recipient_email")
+        subject = request.form.get("subject")
+        body = request.form.get("body")
 
-    try:
-        msg = Message(subject=subject,
-                      sender=current_user.id,  # Usa l'email dell'utente loggato
-                      recipients=[recipient_email],
-                      body=body)
-        msg.html = body  # Usa HTML nel corpo dell'email se disponibile
-        mail.send(msg)
-        flash("Email inviata con successo!", "success")
-        return redirect(url_for("dashboard"))
-    except Exception as e:
-        flash(f"Errore nell'invio dell'email: {str(e)}", "danger")
-        return redirect(url_for("dashboard"))
+        # Verifica se tutti i campi sono compilati
+        if not recipient_email or not subject or not body:
+            feedback_message = "Tutti i campi sono obbligatori."
+        else:
+            try:
+                # Split dell'email in caso di più destinatari
+                recipients = [email.strip() for email in recipient_email.split(",")]
+
+                # Crea il messaggio
+                msg = Message(subject=subject,
+                              sender="nicolaguarise00@gmail.com",  # Specifica il mittente
+                              recipients=recipients,
+                              body=body)
+                msg.html = body  # Usa il contenuto HTML della textarea
+
+                # Invio dell'email
+                mail.send(msg)
+
+                # Feedback positivo
+                feedback_message = "Email inviata con successo!"
+                feedback_class = "text-green-500"
+            except Exception as e:
+                # Feedback di errore
+                feedback_message = f"Errore nell'invio: {str(e)}"
+                print(f"Errore nell'invio dell'email: {str(e)}")  # Stampa errore nella console per il debug
+
+    return render_template('send-email.html', feedback_class=feedback_class, feedback_message=feedback_message)
 
 @app.route("/profile")
 @login_required
