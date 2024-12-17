@@ -250,11 +250,14 @@
 
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-        {% for category, message in messages %}
-        <div class="text-red {{ category }}">{{ message }}</div>
-        {% endfor %}
+        <ul class="flash-messages">
+            {% for category, message in messages %}
+            <li class="flash-message {{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
         {% endif %}
         {% endwith %}
+
     </main>
 </body>
 
