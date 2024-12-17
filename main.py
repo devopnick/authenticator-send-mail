@@ -140,6 +140,11 @@ def sender():
 
     return render_template('send-email.html', feedback_class=feedback_class, feedback_message=feedback_message)
 
+@app.route("/profile")
+@login_required
+def profile():
+    return render_template('profile.html', email=current_user.id, current_page='profile')
+
 @app.route("/dashboard")
 @login_required
 def dashboard():
@@ -152,6 +157,7 @@ def logout():
     logout_user()
     flash('Logout effettuato con successo!', 'success')
     return redirect(url_for('index'))
+
 
 if __name__ == "__main__":
     app.run(debug=True)

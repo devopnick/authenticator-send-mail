@@ -1,0 +1,12 @@
+{% extends 'dashboard.html' %}
+
+{% block content %}
+<h1>Benvenuto, {{ email }}!</h1>
+<form method="POST" action="{{ url_for('send_email') }}">
+    <input type="email" name="recipient_email" placeholder="Destinatario" required><br>
+    <input type="text" name="subject" placeholder="Oggetto" required><br>
+    <textarea name="body" placeholder="Corpo del messaggio" required></textarea><br>
+    <button type="submit">Invia Email</button>
+</form>
+<a href="{{ url_for('logout') }}">Esci</a>
+{% endblock %}
