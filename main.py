@@ -170,8 +170,11 @@ def profile():
             flash(f"Errore durante l'aggiornamento delle credenziali: {str(e)}", "danger")
             return redirect(url_for('profile'))
 
-
-    return render_template('profile.html', email=current_user.id)
+    if current_user.is_authenticated:
+        name = users.get(current_user.id, {}).get('name', 'utente')
+        return render_template('profile.html', email=current_user.id, name=name)
+    else:  
+        return render_template('profile.html', email=current_user.id, name=None)
 
 @app.route("/dashboard")
 @login_required
