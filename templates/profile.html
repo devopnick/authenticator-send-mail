@@ -19,39 +19,31 @@
         {% endif %}
         {% endwith %}
 
-        <!-- Modulo per inviare email -->
+        <!-- Modulo per cambiare/aggiornare le credenziali -->
         <form method="POST" class="space-y-4">
             <div>
-                <label for="recipient_email" class="block text-sm font-medium text-gray-700">Destinatario:</label>
-                <input type="email" name="recipient_email" id="recipient_email" placeholder="Destinatario"
+                <input type="email" name="email" id="email" placeholder="Nuova Email"
                     class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required><br>
+                    value="{{ email }}" required><br>
             </div>
 
             <div>
-                <label for="subject" class="block text-sm font-medium text-gray-700">Oggetto:</label>
-                <input type="text" name="subject" id="subject" placeholder="Oggetto"
+                <input type="text" name="name" id="name" placeholder="Nome del Negozio"
                     class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required><br>
+                    required value="name"><br>
             </div>
 
             <div>
-                <label for="body" class="block text-sm font-medium text-gray-700">Corpo del messaggio:</label>
-                <textarea name="body" id="body" placeholder="Corpo del messaggio" rows="6"
+                <input type="password" name="password" id="password" placeholder="Nuova Password"
                     class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required></textarea><br>
+                    required value="password"><br>
             </div>
 
             <button type="submit"
                 class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
-                Invia Email
+                Aggiorna Credenziali
             </button>
         </form>
-
-        <!-- Link per il logout -->
-        <a href="{{ url_for('logout') }}" class="text-blue-600 hover:text-blue-800 mt-4 inline-block">Esci</a>
-
     </div>
 </div>
-
 {% endblock %}
