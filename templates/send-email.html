@@ -17,42 +17,24 @@
             <!-- Destinatario -->
             <div class="mb-5">
                 <label for="recipient_email" class="block text-lg font-medium text-gray-700">Destinatario:</label>
-                <div class="grid-cols-2 grid space-x-3 mt-2">
-                    <input type="text" name="recipient_email" id="recipient_email"
-                        class="block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Inserisci email" required>
-
-                    <!-- Menu a discesa per selezionare email -->
-                    <select id="email_dropdown"
-                        class="px-4 py-3 border border-gray-300 rounded-md shadow-sm bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        onchange="addEmailToRecipient()">
-                        <option value="">Seleziona un destinatario</option>
-                        {% for email in emails %}
-                        <option value="{{ email }}">{{ email }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+                <input type="text" name="recipient_email" id="recipient_email" placeholder="Inserisci email" required>
             </div>
+
             <!-- Oggetto -->
             <div class="mb-5">
                 <label for="subject" class="block text-lg font-medium text-gray-700">Oggetto:</label>
-                <input type="text" name="subject" id="subject"
-                    class="block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    required>
+                <input type="text" name="subject" id="subject" required>
             </div>
 
-            <!-- Corpo del messaggio -->
-
+            <!-- Corpo con TinyMCE -->
             <div class="mb-5">
                 <label for="body" class="block text-lg font-medium text-gray-700">Corpo del messaggio:</label>
-                <textarea name="body" id="body"
-                    class="block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    rows="6" required></textarea>
+                <textarea name="body" id="body"></textarea>
             </div>
 
-            <!-- Bottone per inviare l'email -->
+            <!-- Bottone per inviare -->
             <button type="submit"
-                class="w-full px-4 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-200">
+                class="w-full px-4 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200">
                 Invia Email
             </button>
         </form>
