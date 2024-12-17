@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/Users/monica/Desktop/authenticator-send-mail/.venv"
+set -gx VIRTUAL_ENV "/Users/monica/Desktop/authenticator-send-mail-1/.venv"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH
