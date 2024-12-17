@@ -143,7 +143,7 @@ def sender():
 @app.route("/profile")
 @login_required
 def profile():
-    return render_template('profile.html', email=current_user.email, current_page='profile')
+    return render_template('profile.html', email=current_user.id, current_page='profile')
 
 @app.route("/dashboard")
 @login_required
