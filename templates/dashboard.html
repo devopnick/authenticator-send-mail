@@ -9,16 +9,18 @@
     <!-- TinyMCE CDN -->
     <script src="https://cdn.tiny.cloud/1/zvqiuud3tjvncz0h9vpbfzzynpvkyc65oy6twm47yxv3ha91/tinymce/6/tinymce.min.js"
         referrerpolicy="origin"></script>
-
-    <!-- Inizializzazione -->
     <script>
         tinymce.init({
-            selector: 'textarea',  // Collega l'editor alle textarea
+            selector: 'textarea',  // Collega TinyMCE alla textarea
             height: 300,
             menubar: false,
             plugins: 'link image lists',
             toolbar: 'undo redo | styles | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image',
             branding: false
+        });
+
+        document.querySelector('form').addEventListener('submit', function () {
+            tinymce.triggerSave();
         });
     </script>
     <title>Document</title>
