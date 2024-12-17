@@ -103,6 +103,7 @@ def login():
     return render_template('login.html', form=form, current_page='login')
 
 @app.route("/send-email", methods=['GET', 'POST'])
+@login_required
 def sender():
     feedback_message = None
     feedback_class = "text-red-500"
@@ -139,6 +140,38 @@ def sender():
                 print(f"Errore nell'invio dell'email: {str(e)}")  # Stampa errore nella console per il debug
 
     return render_template('send-email.html', feedback_class=feedback_class, feedback_message=feedback_message)
+
+@app.route("/update-credentials", methods=['GET', 'POST'])
+@login_required
+def update_credentials():
+    # Controlla se il metodo della richiesta è POST
+    if request.method == 'POST':
+        new_email = request.form['email']
+        new_name = request.form['name']
+        new_password = request.form['password']
+
+        # Esegui le verifiche necessarie (come la validazione dell'email)
+        if not new_email or not new_name or not new_password:
+            flash("Tutti i campi sono obbligatori.", "danger")
+            return redirect(url_for('update_credentials'))
+
+        # Se non ci sono errori, aggiorna le credenziali dell'utente
+        try:
+            # Aggiorna l'email, nome e password nel "database" o struttura dati
+            users[current_user.id]['email'] = new_email
+            users[current_user.id]['name'] = new_name
+            users[current_user.id]['password'] = new_password
+
+            # Mostra un messaggio di successo
+            flash("Credenziali aggiornate con successo!", "success")
+            return redirect(url_for('profile'))
+
+        except Exception as e:
+            flash(f"Errore durante l'aggiornamento delle credenziali: {str(e)}", "danger")
+            return redirect(url_for('update_credentials'))
+
+    # Se la richiesta è GET, mostra il modulo di aggiornamento
+    return render_template('update_credentials.html', email=current_user.id)
 
 @app.route("/profile")
 @login_required
