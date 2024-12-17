@@ -4,9 +4,13 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, login_
 from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
+app.secret_key = os.getenv('SUPABASE_JWT_SECRET')
 
 # Configurazione Flask-Mail
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -29,7 +33,6 @@ emails = ["example1@gmail.com", "example2@gmail.com"]
 users = {"nicolaheavy@gmail.com": {"password": "provalogin"}}
 
 
-
 # Funzione per caricare l'utente Flask-Login
 @login_manager.user_loader
 def load_user(user_id):
@@ -47,8 +50,8 @@ class LoginForm(Form):
     password = PasswordField('Password', [validators.DataRequired()])
 
 
-# Configura il database Supabase
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:tua_password@db.xxxxx.supabase.co:5432/postgres'
+# Configura il database PostgreSQL usando le variabili d'ambiente
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('POSTGRES_URL_NON_POOLING')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Inizializza SQLAlchemy
@@ -64,6 +67,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
+
 
 
 @app.route("/")
