@@ -80,8 +80,11 @@ def register():
             login_user(user)
   
             return redirect(url_for('dashboard'))
-
-    return render_template('register.html', form=form, current_page='register')
+    if current_user.is_authenticated:
+        name = users.get(current_user.id, {}).get('name', 'utente')
+        return render_template('register.html', form=form, name=name, email=current_user.id, current_page='register')
+    else:
+        return render_template('register.html', form=form, name=None, email=None, current_page='register')
 
 
 @app.route("/login", methods=['GET', 'POST'])
