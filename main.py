@@ -158,6 +158,10 @@ def logout():
     flash('Logout effettuato con successo!', 'success')
     return redirect(url_for('index'))
 
+@app.errorhandler(500)
+def internal_error(error):
+    app.logger.error(f"Si è verificato un errore interno: {error}")
+    return "Si è verificato un errore interno. I dettagli sono stati registrati.", 500
 
 if __name__ == "__main__":
     app.run(debug=True)
