@@ -56,7 +56,7 @@ class LoginForm(Form):
 def index():
     if current_user.is_authenticated:
         name = users.get(current_user.id, {}).get('name', 'utente')
-        return render_template('index.html', name=name, email=current_user.id )
+        return render_template('index.html', name=name, email=current_user.id, current_page='index')
     else:
         return render_template('index.html', name=None, email=None, current_page='index' )
         
@@ -176,8 +176,11 @@ def profile():
 @app.route("/dashboard")
 @login_required
 def dashboard():
-    name = users.get(current_user.id, {}).get('name', 'utente')
-    return render_template('dashboard.html', name=name, email=current_user.id, current_page='dashboard')
+    if current_user.is_authenticated:
+        name = users.get(current_user.id, {}).get('name', 'utente')
+        return render_template('dashboard.html', name=name, email=current_user.id, current_page='dashboard')
+    else:
+        return render_template('dashboard.html', name=None, email=None, current_page='dashboard')
 
 @app.route("/logout")
 @login_required
