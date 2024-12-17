@@ -83,9 +83,9 @@ def register():
         
     if current_user.is_authenticated:
         name = users.get(current_user.id, {}).get('name', 'utente')
-        return render_template('register.html', form=form, name=name, current_page='register', email=current_user.id)
+        return render_template('register.html', form=form, name=name, form=form, current_page='register', email=current_user.id)
     else:
-        return render_template('register.html', form=form, name=None, form=form, current_page='register', email=current_user.id)
+        return render_template('register.html', form=form, name=None, form=form, current_page='register', email=None)
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -105,9 +105,9 @@ def login():
 
     if current_user.is_authenticated:
         name = users.get(current_user.id, {}).get('name', 'utente')
-        return render_template('login.html', name=name, current_page='login', email=current_user.id)
+        return render_template('login.html', name=name, form=form, current_page='login', email=current_user.id)
     else:
-        return render_template('login.html',name=None, form=form, current_page='login', email=current_user.id)
+        return render_template('login.html',name=None, form=form, current_page='login', email=None)
 
 @app.route("/send-email", methods=['GET', 'POST'])
 @login_required
@@ -150,7 +150,7 @@ def sender():
         name = users.get(current_user.id, {}).get('name', 'utente')
         return render_template('send-email.html', name=name, current_page='send-email', feedback_class=feedback_class, feedback_message=feedback_message, email=current_user.id)
     else:
-        return render_template('send-email.html',name=None, current_page='send-email', feedback_class=feedback_class, feedback_message=feedback_message, email=current_user.id)
+        return render_template('send-email.html',name=None, current_page='send-email', feedback_class=feedback_class, feedback_message=feedback_message, email=None)
 
 @app.route("/profile", methods=['GET', 'POST'])
 @login_required
@@ -185,7 +185,7 @@ def profile():
         name = users.get(current_user.id, {}).get('name', 'utente')
         return render_template('profile.html', name=name, current_page='profile', email=current_user.id)
     else:
-        return render_template('profile.html',name=None, current_page='profile', email=current_user.id)
+        return render_template('profile.html',name=None, current_page='profile', email=None)
 
 @app.route("/dashboard")
 @login_required
