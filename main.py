@@ -4,7 +4,7 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, login_
 from flask_mail import Mail, Message
 from dotenv import load_dotenv
 import os
-from app import create_client, Client
+from app import create_client
 
 
 app = Flask(__name__)
@@ -61,16 +61,30 @@ load_dotenv()
 
 url = os.getenv("SUPABASE_URL")
 key = os.getenv("SUPABASE_KEY")
-supabase: Client = create_client(url, key)
+supabase= create_client(url, key)
 # Recupera tutti i dati dalla tabella "users"
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
-    if current_user.is_authenticated:
-        name = users.get(current_user.id, {}).get('name', 'utente')
-        return render_template('index.html', name=name, email=current_user.id, current_page='index')
+    if url and key:
+        response = supabase.table("user").select("*").execute()
+        data = response.data
+        if data:
+            name = data[0].get("name")
+            email = data[0].get("email")
+            psw = data[0].get("password")
+        else:
+            flash(f"La response è errata!", 'danger')
+            
     else:
-        return render_template('index.html', name=None, email=None, current_page='index' )
+        flash(f"Key o Url errati ricontrolla i parametri!", 'danger')
+    
+
+    if current_user.is_authenticated:
+        
+        return render_template('index.html', psw=psw, name=name, email=email, current_page='index')
+    else:
+        return render_template('index.html', psw=None, name=None, email=None, current_page='index' )
         
 @app.route("/register", methods=['GET', 'POST'])
 def register():
