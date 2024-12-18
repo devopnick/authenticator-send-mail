@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, flash, redirect,url_for
+from flask import Flask, render_template, request, flash, redirect,url_for, jsonify
 from wtforms import Form, StringField,PasswordField, validators
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from flask_mail import Mail, Message
+from dotenv import load_dotenv
 import os
-from supabase import create_client, Client
+from app import create_client, Client
 
 
 app = Flask(__name__)
@@ -56,12 +57,14 @@ class LoginForm(Form):
     password = PasswordField('Password', [validators.DataRequired()])
 
 
-url: str = os.environ.get("https://gdurjgazwqavavpgttqz.supabase.co")
-key: str = os.environ.get("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkdXJqZ2F6d3FhdmF2cGd0dHF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ0NDQ3MzIsImV4cCI6MjA1MDAyMDczMn0.4xta4I9YsMNRh7zeoEBIUa3nTD3cAzUpIL3vSuWPDdY")
+load_dotenv()
+
+url = os.getenv("SUPABASE_URL")
+key = os.getenv("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
+# Recupera tutti i dati dalla tabella "users"
 
-
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 def index():
     if current_user.is_authenticated:
         name = users.get(current_user.id, {}).get('name', 'utente')
