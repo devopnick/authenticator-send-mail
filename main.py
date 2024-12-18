@@ -2,6 +2,9 @@ from flask import Flask, render_template, request, flash, redirect,url_for
 from wtforms import Form, StringField,PasswordField, validators
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from flask_mail import Mail, Message
+import os
+from supabase import create_client, Client
+
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -51,6 +54,12 @@ class RegistrationForm(Form):
 class LoginForm(Form):
     email = StringField('Email', [validators.Email(), validators.DataRequired()])
     password = PasswordField('Password', [validators.DataRequired()])
+
+
+url: str = os.environ.get("https://gdurjgazwqavavpgttqz.supabase.co")
+key: str = os.environ.get("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkdXJqZ2F6d3FhdmF2cGd0dHF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ0NDQ3MzIsImV4cCI6MjA1MDAyMDczMn0.4xta4I9YsMNRh7zeoEBIUa3nTD3cAzUpIL3vSuWPDdY")
+supabase: Client = create_client(url, key)
+
 
 @app.route("/")
 def index():
