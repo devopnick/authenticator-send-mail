@@ -95,21 +95,38 @@ def register():
         email = form.email.data
         password = form.password.data
 
-        if email in users:
-            # Passa url_for('login') al template per il link
-            flash(f"L'email è già registrata. Prova a fare il <a class='text-white font-bold text-sm' href='{url_for('login')}'>login</a>.", 'danger')
+        # Controlla se l'email è già registrata
+        response = supabase.table("user").select("email").eq("email", email).execute()
+        if response.data:  # Se esiste almeno una riga con l'email
+            flash(
+                f"L'email è già registrata. Prova a fare il <a class='text-white font-bold text-sm' href='{url_for('login')}'>login</a>.",
+                'danger'
+            )
         else:
-            users[email] = {"password": password, "name": name}
-            flash(f"Registrazione avvenuta con successo! Benvenuto, "+name+".", 'success')
+            # Inserisci una nuova riga per l'utente
+            try:
+                response = supabase.table("user").insert({
+                    "name": name,
+                    "password": password,  # ATTENZIONE: Ricorda di hashare la password!
+                    "email": email
+                }).execute()
 
-            user = User(email)
-            login_user(user)
-  
-            return redirect(url_for('dashboard'))
+                # Mostra messaggio di successo
+                flash(f"Registrazione avvenuta con successo! Benvenuto, {name}.", 'success')
+
+                # Logga l'utente e reindirizza alla dashboard
+                user = User(email)
+                login_user(user)
+                return redirect(url_for('dashboard'))
+
+            except Exception as e:
+                flash(f"Errore durante la registrazione: {str(e.message)}", 'danger')
+
+    # Se l'utente è già autenticato, mostra il form con i dati attuali
     if current_user.is_authenticated:
-        name = users.get(current_user.id, {}).get('name', 'utente')
-        return render_template('register.html', form=form, name=name, email=current_user.id, current_page='register')
+        return render_template('register.html', form=form, name=current_user.name, email=current_user.email, current_page='register')
     else:
+        # Mostra il form vuoto
         return render_template('register.html', form=form, name=None, email=None, current_page='register')
 
 
