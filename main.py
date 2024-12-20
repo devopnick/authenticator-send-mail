@@ -1,14 +1,20 @@
 from flask import Flask, render_template, request, flash, redirect,url_for, jsonify
-from wtforms import Form, StringField,PasswordField, validators
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from flask_mail import Mail, Message
 from dotenv import load_dotenv
 import os
 from app import create_client
+from supabase import create_client, Client
+from werkzeug.security import check_password_hash
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, EmailField, SubmitField, Form, validators
+from wtforms.validators import DataRequired, Email, Length
+from flask_wtf.csrf import CSRFProtect
 
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
+csrf = CSRFProtect(app)
 
 # Configurazione Flask-Mail
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -20,30 +26,49 @@ app.config['MAIL_PASSWORD'] = 'zyrhvorphptgmqic'  # App password generata da Goo
 app.config['MAIL_DEFAULT_SENDER'] = 'nicolaguarise00@gmail.com'  # Mittente predefinito
 mail = Mail(app)
 
-# Configurazione di Flask-Login
+
+# Setup Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
-emails = ["example1@gmail.com", "example2@gmail.com"]
 
-
-# Simulazione di un database per utenti
-users = {"nicolaheavy@gmail.com": {"password": "provalogin"}}
-
-# Classe User per Flask-Login
+# User model for Flask-Login
 class User(UserMixin):
-    def __init__(self, id):
+    def __init__(self, id, name, email):
         self.id = id
+        self.name = name
+        self.email = email
 
-    @staticmethod
+"""     @staticmethod
     def get(user_id):
-        if user_id in users:
-            return User(user_id)
+        # Recupera l'utente dal database Supabase
+        response = supabase.table("user").select("id, email, password").eq("email", user_id).execute()
+        if response.data:
+            user_data = response.data[0]
+            return User(user_data['email'], user_data['id'])
         return None
+
+    def check_password(self, password):
+        # Verifica la password (hashing)
+        response = supabase.table("user").select("password").eq("email", self.email).execute()
+        if response.data:
+            stored_password = response.data[0]['password']
+            return check_password_hash(stored_password, password)
+        return False
+
+    def get_id(self):
+        return self.email """
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.get(user_id)
+    # Query to Supabase to get the user by ID
+    response = supabase.table('user').select('*').eq('id', user_id).execute()
+    user_data = response.data
+    if user_data:
+        user = user_data[0]
+        return User(id=user['id'], name=user['name'], email=user['email'])
+    return None
+
 
 # Form per la registrazione
 class RegistrationForm(Form):
@@ -51,10 +76,10 @@ class RegistrationForm(Form):
     email = StringField('Email', [validators.Length(min=6, max=40), validators.Email(), validators.DataRequired()])
     password = PasswordField('Password', [validators.DataRequired(), validators.Length(min=6)])
 
-# Form per il login
-class LoginForm(Form):
-    email = StringField('Email', [validators.Email(), validators.DataRequired()])
-    password = PasswordField('Password', [validators.DataRequired()])
+class LoginForm(FlaskForm):
+    email = EmailField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
+    submit = SubmitField('Log in')
 
 
 load_dotenv()
@@ -134,22 +159,29 @@ def register():
 def login():
     form = LoginForm(request.form)
 
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))  # L'utente è già autenticato, redirigi
+    
     if request.method == 'POST' and form.validate():
         email = form.email.data
         password = form.password.data
-
-        if email in users and users[email]['password'] == password:
-            user = User(email)
-            login_user(user)  # Login dell'utente
+        
+        response = supabase.table('user').select('*').eq('email', email).execute()
+        user_data = response.data
+        
+        if user_data and user_data[0]['password'] == password:
+            user = user_data[0]
+            login_user(User(id=user['id'], name=user['name'], email=user['email']))
             flash('Login effettuato con successo!', 'success')
             return redirect(url_for('dashboard'))
         else:
-            flash('Email o password errati. Riprova.', 'danger')
+            flash('Email o password errati!', 'danger')
+            
     if current_user.is_authenticated:
-        name = users.get(current_user.id, {}).get('name', 'utente')
-        return render_template('login.html', name=name, email=current_user.id, form=form, current_page='login')
+        return render_template('login.html', email=email, form=form, current_page='login')
     else:
-        return render_template('login.html', name=None, email=None, form=form, current_page='login')
+        return render_template('login.html', email=None, form=form, current_page='login')
+
 
 @app.route("/send-email", methods=['GET', 'POST'])
 @login_required
@@ -188,10 +220,9 @@ def sender():
                 feedback_message = f"Errore nell'invio: {str(e)}"
                 print(f"Errore nell'invio dell'email: {str(e)}")  # Stampa errore nella console per il debug
     if current_user.is_authenticated:
-        name = users.get(current_user.id, {}).get('name', 'utente')
-        return render_template('send-email.html',name=name, email=current_user.id, feedback_class=feedback_class, feedback_message=feedback_message)
+        return render_template('send-email.html', email=current_user.id, feedback_class=feedback_class, feedback_message=feedback_message)
     else:
-        return render_template('send-email.html',name=name, email=None, feedback_class=feedback_class, feedback_message=feedback_message)
+        return render_template('send-email.html', email=None, feedback_class=feedback_class, feedback_message=feedback_message)
 
 
 @app.route("/profile", methods=['GET', 'POST'])
@@ -224,8 +255,7 @@ def profile():
             return redirect(url_for('profile'))
 
     if current_user.is_authenticated:
-        name = users.get(current_user.id, {}).get('name', 'utente')
-        return render_template('profile.html', email=current_user.id, name=name)
+        return render_template('profile.html', email=current_user.email, name=current_user.name, current_page='profile')
     else:  
         return render_template('profile.html', email=None, name=None)
 
@@ -233,10 +263,7 @@ def profile():
 @login_required
 def dashboard():
     if current_user.is_authenticated:
-        name = users.get(current_user.id, {}).get('name', 'utente')
-        password = users.get(current_user.id, {}).get('password')
-
-        return render_template('dashboard.html', password=password, name=name, email=current_user.id, current_page='dashboard')
+        return render_template('dashboard.html', current_page='dashboard', name=current_user.name, email=current_user.email)
     else:
         return render_template('dashboard.html', password=None, name=None, email=None, current_page='dashboard')
 
