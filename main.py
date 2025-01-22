@@ -222,7 +222,8 @@ def sender():
                 feedback_message = "Email inviata con successo!"
                 feedback_class = "success"
             except Exception as e:
-                feedback_message = f"Errore nell'invio dell'email"
+                feedback_message = "Errore nell'invio dell'email"
+                feedback_class = "info"
                 print(f"Errore: {feedback_message}")
 
     if current_user.is_authenticated:

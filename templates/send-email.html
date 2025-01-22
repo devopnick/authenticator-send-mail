@@ -41,13 +41,15 @@
 
         {% if feedback_message %}
         <div class="toast-container fixed top-20 right-5 z-50">
-            <div class="toast p-6 rounded-lg w-80 text-white
-                        {% if feedback_class == 'success' %}
-                            bg-green-600
-                        {% else %}
-                            bg-red-600
-                        {% endif %}">
-                <h2 class="text-xl text-white font-semibold text-center">
+            <div class="toast p-4 rounded-lg w-60 text-white
+                    {% if feedback_class == 'success' %}
+                        bg-green-400
+                    {% elif feedback_class == 'info' %}
+                        bg-gray-400
+                    {% else %}
+                        bg-red-600
+                    {% endif %}">
+                <h2 class="text-md text-white font-semibold text-center">
                     {{ feedback_message }}
                 </h2>
             </div>
