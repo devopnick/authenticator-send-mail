@@ -5,13 +5,6 @@
     <div class="max-w-3xl mt-[120px] md:mt-0 mx-auto p-6 bg-white shadow-lg rounded-lg">
         <h1 class="text-3xl font-semibold text-center text-blue-600 mb-6">Invia una Email</h1>
 
-        <!-- Feedback per il risultato dell'invio -->
-        {% if feedback_message %}
-        <div class="mb-4 {{ feedback_class }} text-center">
-            <p class="font-semibold">{{ feedback_message }}</p>
-        </div>
-        {% endif %}
-
         <!-- Form per inviare email -->
         <form method="POST" onsubmit="tinymce.triggerSave()">
             {{ form.hidden_tag() }}
@@ -20,7 +13,7 @@
                 <label for="recipient_email" class="block text-lg font-medium text-gray-700">Destinatario:</label>
                 <input
                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"
-                    type="text" name="recipient_email" id="recipient_email" placeholder="Inserisci email" required>
+                    type="text" name="recipient_email" id="recipient_email" placeholder="Inserisci email">
             </div>
 
             <!-- Oggetto -->
@@ -28,7 +21,7 @@
                 <label for="subject" class="block text-lg font-medium text-gray-700">Oggetto:</label>
                 <input
                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"
-                    type="text" name="subject" id="subject" required>
+                    type="text" name="subject" id="subject">
             </div>
 
             <!-- Corpo con TinyMCE -->
@@ -46,8 +39,36 @@
             </button>
         </form>
 
+        {% if feedback_message %}
+        <div class="toast-container fixed top-20 right-5 z-50">
+            <div class="toast p-6 rounded-lg w-80 text-white
+                        {% if feedback_class == 'success' %}
+                            bg-green-600
+                        {% else %}
+                            bg-red-600
+                        {% endif %}">
+                <h2 class="text-xl text-white font-semibold text-center">
+                    {{ feedback_message }}
+                </h2>
+            </div>
+        </div>
+        {% endif %}
+
     </div>
 </div>
+
+<style>
+    .toast {
+        opacity: 1;
+        transform: translate(0%, 0%);
+        transition: opacity 2s ease-in-out, transform 1s ease-in-out;
+    }
+
+    .toast.opacity-0 {
+        opacity: 0;
+        transform: translate(200%, 0%);
+    }
+</style>
 
 <script>
     // Funzione per aggiungere l'email selezionata al campo del destinatario
@@ -63,6 +84,16 @@
             }
         }
     }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const toasts = document.querySelectorAll('.toast');
+        toasts.forEach(toast => {
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+                setTimeout(() => toast.remove(), 500); // rimuove il toast dopo che è diventato invisibile
+            }, 3000); // il toast scompare dopo 3 secondi
+        });
+    });
 
 </script>
 {% endblock %}

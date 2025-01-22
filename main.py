@@ -191,7 +191,7 @@ def login():
 @login_required
 def sender():
     feedback_message = None
-    feedback_class = "text-red-500"
+    feedback_class = "danger"
     form = EmailForm()
     
     if request.method == 'POST' and form.validate_on_submit():
@@ -202,7 +202,8 @@ def sender():
         # Verifica se tutti i campi sono compilati
         if not recipient_email or not subject or not body:
             feedback_message = "Tutti i campi sono obbligatori."
-        else:
+            print(f"Feedback message: {feedback_message}")  # Stampa per debug        
+    else:
             try:
                 # Split dell'email in caso di più destinatari
                 recipients = [email.strip() for email in recipient_email.split(",")]
@@ -219,11 +220,11 @@ def sender():
 
                 # Feedback positivo
                 feedback_message = "Email inviata con successo!"
-                feedback_class = "text-green-500"
+                feedback_class = "success"
             except Exception as e:
-                # Feedback di errore
-                feedback_message = f"Errore nell'invio: {str(e)}"
-                print(f"Errore nell'invio dell'email: {str(e)}")  # Stampa errore nella console per il debug
+                feedback_message = f"Errore nell'invio dell'email"
+                print(f"Errore: {feedback_message}")
+
     if current_user.is_authenticated:
         return render_template('send-email.html', form=form, name=current_user.name, email=current_user.email, current_page='register', feedback_class=feedback_class, feedback_message=feedback_message)
     else:
