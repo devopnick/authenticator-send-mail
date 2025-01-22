@@ -7,7 +7,7 @@ from app import create_client
 from supabase import create_client, Client
 from werkzeug.security import check_password_hash
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, EmailField, SubmitField, Form, validators
+from wtforms import StringField, PasswordField, EmailField, SubmitField, Form, validators, TextAreaField
 from wtforms.validators import DataRequired, Email, Length
 from flask_wtf.csrf import CSRFProtect
 
@@ -81,6 +81,11 @@ class LoginForm(FlaskForm):
     email = EmailField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
     submit = SubmitField('Log in')
+
+class EmailForm(FlaskForm):
+    recipient_email = EmailField('Destinatario', validators=[DataRequired(), Email()])
+    subject = StringField('Oggetto', validators=[DataRequired()])
+    body = TextAreaField('Corpo del messaggio', validators=[DataRequired()])
 
 
 load_dotenv()
@@ -187,8 +192,9 @@ def login():
 def sender():
     feedback_message = None
     feedback_class = "text-red-500"
-
-    if request.method == 'POST':
+    form = EmailForm()
+    
+    if request.method == 'POST' and form.validate_on_submit():
         recipient_email = request.form.get("recipient_email")
         subject = request.form.get("subject")
         body = request.form.get("body")
@@ -219,9 +225,9 @@ def sender():
                 feedback_message = f"Errore nell'invio: {str(e)}"
                 print(f"Errore nell'invio dell'email: {str(e)}")  # Stampa errore nella console per il debug
     if current_user.is_authenticated:
-        return render_template('send-email.html', name=current_user.name, email=current_user.email, current_page='register', feedback_class=feedback_class, feedback_message=feedback_message)
+        return render_template('send-email.html', form=form, name=current_user.name, email=current_user.email, current_page='register', feedback_class=feedback_class, feedback_message=feedback_message)
     else:
-        return render_template('send-email.html', name=None, email=None, current_page='register', feedback_class=feedback_class, feedback_message=feedback_message)
+        return render_template('send-email.html', form=None, name=None, email=None, current_page='register', feedback_class=feedback_class, feedback_message=feedback_message)
 
 
 @app.route("/profile", methods=['GET', 'POST'])

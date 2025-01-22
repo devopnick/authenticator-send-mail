@@ -14,7 +14,7 @@
 
         <!-- Form per inviare email -->
         <form method="POST" onsubmit="tinymce.triggerSave()">
-
+            {{ form.hidden_tag() }}
             <!-- Destinatario -->
             <div class="mb-5">
                 <label for="recipient_email" class="block text-lg font-medium text-gray-700">Destinatario:</label>
@@ -63,5 +63,6 @@
             }
         }
     }
+
 </script>
 {% endblock %}
