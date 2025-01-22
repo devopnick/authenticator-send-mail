@@ -71,10 +71,11 @@ def load_user(user_id):
 
 
 # Form per la registrazione
-class RegistrationForm(Form):
-    name = StringField('Name', [validators.DataRequired(), validators.Length(min=6, max=30)])
-    email = StringField('Email', [validators.Length(min=6, max=40), validators.Email(), validators.DataRequired()])
-    password = PasswordField('Password', [validators.DataRequired(), validators.Length(min=6)])
+class RegistrationForm(FlaskForm):  # Usa FlaskForm al posto di Form
+    name = StringField('Name', validators=[DataRequired(), Length(min=6, max=30)])
+    email = EmailField('Email', validators=[DataRequired(), Email(), Length(min=6, max=40)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
+    submit = SubmitField('Register')  # Pulsante di invio
 
 class LoginForm(FlaskForm):
     email = EmailField('Email', validators=[DataRequired(), Email()])
@@ -115,7 +116,7 @@ def index():
 def register():
     form = RegistrationForm(request.form)
 
-    if request.method == 'POST' and form.validate():
+    if form.validate_on_submit():
         name = form.name.data
         email = form.email.data
         password = form.password.data
@@ -123,10 +124,8 @@ def register():
         # Controlla se l'email è già registrata
         response = supabase.table("user").select("email").eq("email", email).execute()
         if response.data:  # Se esiste almeno una riga con l'email
-            flash(
-                f"L'email è già registrata. Prova a fare il <a class='text-white font-bold text-sm' href='{url_for('login')}'>login</a>.",
-                'danger'
-            )
+            flash("L'email è già registrata. Effettua il login.", 'danger')
+            return redirect(url_for('login'))
         else:
             # Inserisci una nuova riga per l'utente
             try:
@@ -139,12 +138,12 @@ def register():
                 # Mostra messaggio di successo
                 flash(f"Registrazione avvenuta con successo! Benvenuto, {name}.", 'success')
 
-                # Logga l'utente e reindirizza alla dashboard
-                user = User(email)
+                user = User(id=response.data[0]['id'], name=name, email=email)
                 login_user(user)
                 return redirect(url_for('dashboard'))
 
             except Exception as e:
+                app.logger.error(f"Errore durante la registrazione: {e}")
                 flash(f"Errore durante la registrazione: {str(e.message)}", 'danger')
 
     # Se l'utente è già autenticato, mostra il form con i dati attuali
@@ -220,9 +219,9 @@ def sender():
                 feedback_message = f"Errore nell'invio: {str(e)}"
                 print(f"Errore nell'invio dell'email: {str(e)}")  # Stampa errore nella console per il debug
     if current_user.is_authenticated:
-        return render_template('send-email.html', email=current_user.id, feedback_class=feedback_class, feedback_message=feedback_message)
+        return render_template('send-email.html', name=current_user.name, email=current_user.email, current_page='register', feedback_class=feedback_class, feedback_message=feedback_message)
     else:
-        return render_template('send-email.html', email=None, feedback_class=feedback_class, feedback_message=feedback_message)
+        return render_template('send-email.html', name=None, email=None, current_page='register', feedback_class=feedback_class, feedback_message=feedback_message)
 
 
 @app.route("/profile", methods=['GET', 'POST'])
